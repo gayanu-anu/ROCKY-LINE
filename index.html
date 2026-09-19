@@ -44,6 +44,28 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
+        /* Style pembungkus input password & tombol mata */
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-wrapper input {
+            padding-right: 40px; /* Bikin ruang di kanan agar teks tidak tertutup ikon */
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         .btn-submit {
             width: 100%;
             padding: 10px;
@@ -53,6 +75,7 @@
             border-radius: 4px;
             font-size: 16px;
             cursor: pointer;
+            margin-top: 10px;
         }
         .btn-submit:hover {
             background-color: #0056b3;
@@ -77,17 +100,36 @@
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" required placeholder="Masukkan password">
+            <div class="password-wrapper">
+                <input type="password" id="password" required placeholder="Masukkan password">
+                <button type="button" id="togglePassword" class="toggle-password" title="Tampilkan/Sembunyikan Password">
+                    👁️
+                </button>
+            </div>
         </div>
         <button type="submit" class="btn-submit">Masuk</button>
         <p id="errorMsg" class="error-message">Username atau password salah!</p>
     </form>
 </div>
 
-<!-- KODE JAVASCRIPT DILETAKKAN SEBELUM TUTUP BODY -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Setel Username, Password, dan Link Tujuan di sini
+        // 1. Fitur Toggle Mata Password
+        const passwordInput = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+
+        togglePasswordBtn.addEventListener('click', function() {
+            // Cek tipe input saat ini
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            
+            // Ubah tipe input
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+            
+            // Ubah ikon mata
+            this.textContent = isPassword ? '🙈' : '👁️';
+        });
+
+        // 2. Fitur Proses Login
         const USERNAME_BENAR = "user123";
         const PASSWORD_BENAR = "rahasia123";
         const LINK_UTAMA = "https://tryout.winayalaksa.id/user/dashboard";
@@ -100,7 +142,7 @@
                 e.preventDefault(); // Mencegah reload halaman
                 
                 const userInput = document.getElementById('username').value.trim();
-                const passInput = document.getElementById('password').value.trim();
+                const passInput = passwordInput.value.trim();
 
                 // Pengecekan Login
                 if (userInput === USERNAME_BENAR && passInput === PASSWORD_BENAR) {
