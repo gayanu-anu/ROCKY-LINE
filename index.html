@@ -3,158 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Akses Tautan</title>
+    <title>Akses Tautan</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        html, body {
             margin: 0;
-        }
-        .login-card {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 350px;
-        }
-        .login-card h2 {
-            margin-bottom: 20px;
-            font-size: 20px;
-            text-align: center;
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #666;
-            font-size: 14px;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        /* Style pembungkus input password & tombol mata */
-        .password-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .password-wrapper input {
-            padding-right: 40px; /* Bikin ruang di kanan agar teks tidak tertutup ikon */
-        }
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #666;
             padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 100%;
+            overflow: hidden; /* Menghilangkan scrollbar bawaan */
         }
-        .btn-submit {
+
+        /* Container pembungkus untuk memotong tampilan */
+        .iframe-container {
+            position: relative;
             width: 100%;
-            padding: 10px;
-            background-color: #007bff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Menggeser iframe ke atas agar bagian atasnya tersembunyi */
+        .iframe-container iframe {
+            position: absolute;
+            top: -200px; /* UBAH ANGKA INI: Semakin besar minusnya, semakin banyak bagian atas yang terpotong */
+            left: 0;
+            width: 100%;
+            height: calc(100% + 200px); /* Sesuaikan nilainya dengan nilai 'top' di atas */
             border: none;
-            color: white;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .btn-submit:hover {
-            background-color: #0056b3;
-        }
-        .error-message {
-            color: red;
-            font-size: 13px;
-            margin-top: 10px;
-            display: none;
-            text-align: center;
         }
     </style>
 </head>
 <body>
 
-<div class="login-card">
-    <h2>Masuk untuk Melanjutkan</h2>
-    <form id="loginForm">
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" required placeholder="Masukkan username">
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <div class="password-wrapper">
-                <input type="password" id="password" required placeholder="Masukkan password">
-                <button type="button" id="togglePassword" class="toggle-password" title="Tampilkan/Sembunyikan Password">
-                    👁️
-                </button>
-            </div>
-        </div>
-        <button type="submit" class="btn-submit">Masuk</button>
-        <p id="errorMsg" class="error-message">Username atau password salah!</p>
-    </form>
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // 1. Fitur Toggle Mata Password
-        const passwordInput = document.getElementById('password');
-        const togglePasswordBtn = document.getElementById('togglePassword');
-
-        togglePasswordBtn.addEventListener('click', function() {
-            // Cek tipe input saat ini
-            const isPassword = passwordInput.getAttribute('type') === 'password';
-            
-            // Ubah tipe input
-            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-            
-            // Ubah ikon mata
-            this.textContent = isPassword ? '🙈' : '👁️';
-        });
-
-        // 2. Fitur Proses Login
-        const USERNAME_BENAR = "user123";
-        const PASSWORD_BENAR = "rahasia123";
-        const LINK_UTAMA = "https://tryout.winayalaksa.id/user/dashboard";
-
-        const form = document.getElementById('loginForm');
-        const errorMsg = document.getElementById('errorMsg');
-
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault(); // Mencegah reload halaman
-                
-                const userInput = document.getElementById('username').value.trim();
-                const passInput = passwordInput.value.trim();
-
-                // Pengecekan Login
-                if (userInput === USERNAME_BENAR && passInput === PASSWORD_BENAR) {
-                    errorMsg.style.display = 'none';
-                    window.location.href = LINK_UTAMA;
-                } else {
-                    errorMsg.style.display = 'block';
-                }
-            });
-        }
-    });
-</script>
+    <!-- Container iFrame -->
+    <div class="iframe-container">
+        <iframe src="https://tryout.winayalaksa.id/user/dashboard"></iframe>
+    </div>
 
 </body>
 </html>
