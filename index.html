@@ -50,7 +50,6 @@
             height: 30px;
             fill: white;
         }
-        /* Style Tambahan untuk Teks ROCKY LINE */
         .brand-title {
             font-size: 26px;
             font-weight: 800;
@@ -211,7 +210,7 @@
 </head>
 <body>
 
-    <!-- HALAMAN LOGIN (COLORFUL WITH BRANDING) -->
+    <!-- HALAMAN LOGIN -->
     <div id="loginView" class="login-container">
         <div class="login-card">
             <div class="avatar-icon">
@@ -220,7 +219,6 @@
                 </svg>
             </div>
             
-            <!-- Teks Tambahan ROCKY LINE -->
             <h1 class="brand-title">ROCKY LINE</h1>
             <h2>Selamat Datang</h2>
             
@@ -249,7 +247,7 @@
     <!-- HALAMAN DASHBOARD LINK UTAMA -->
     <div id="dashboardView" class="dashboard-container">
         <div class="top-bar">
-            <h3>ROCKY LINE — Sesi Akses Aktif</h3>
+            <h3 id="userGreeting">ROCKY LINE — Sesi Akses Aktif</h3>
             <button id="btnLogout" class="btn-logout">Logout</button>
         </div>
         <div class="iframe-wrapper">
@@ -259,8 +257,14 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const USERNAME_BENAR = "user123";
-        const PASSWORD_BENAR = "rahasia123";
+        // DAFTAR PENGGUNA TERDAFTAR (Tambahkan user baru di sini)
+        const USERS = [
+            { username: "rocky", password: "adminkanwil" },
+            { username: "rocky", password: "kanwilpas" },
+            { username: "rocky", password: "sdmpas" },
+            { username: "rocky", password: "analissdma" }
+        ];
+
         const LINK_UTAMA = "https://tryout.winayalaksa.id/user/dashboard";
 
         const loginView = document.getElementById('loginView');
@@ -269,6 +273,7 @@
         const loginForm = document.getElementById('loginForm');
         const errorMsg = document.getElementById('errorMsg');
         const btnLogout = document.getElementById('btnLogout');
+        const userGreeting = document.getElementById('userGreeting');
 
         // 1. SKRIP MATA PASSWORD
         const passwordInput = document.getElementById('password');
@@ -283,14 +288,20 @@
             eyeIcon.querySelector('path').setAttribute('d', isPassword ? eyeClosePath : eyeOpenPath);
         });
 
-        // 2. SKRIP LOGIN
+        // 2. SKRIP LOGIN MULTI-USER
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const userInput = document.getElementById('username').value.trim();
             const passInput = passwordInput.value.trim();
 
-            if (userInput === USERNAME_BENAR && passInput === PASSWORD_BENAR) {
+            // Cek apakah ada kombinasi username dan password yang cocok dalam array USERS
+            const foundUser = USERS.find(u => u.username === userInput && u.password === passInput);
+
+            if (foundUser) {
                 errorMsg.style.display = 'none';
+                
+                // Menampilkan nama user di top-bar
+                userGreeting.textContent = `ROCKY LINE — Sesi Akses Aktif (${foundUser.username})`;
                 
                 mainFrame.src = LINK_UTAMA;
                 loginView.style.display = 'none';
