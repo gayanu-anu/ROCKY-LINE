@@ -16,7 +16,7 @@
             min-height: 100vh;
         }
 
-        /* --- 1. TAMPILAN FORM LOGIN COLORFUL --- */
+        /* --- 1. TAMPILAN FORM LOGIN --- */
         .login-container {
             display: flex;
             justify-content: center;
@@ -153,7 +153,7 @@
             display: none;
         }
 
-        /* --- 2. TAMPILAN DASHBOARD + LOGOUT --- */
+        /* --- 2. DASHBOARD & PENGATURAN PEMOTONGAN IFRAME --- */
         .dashboard-container {
             display: none;
             width: 100%;
@@ -193,18 +193,28 @@
             opacity: 0.9;
         }
 
+        /* WADAH PENGAPIT IFRAME (CROPPER) */
         .iframe-wrapper {
             position: relative;
             flex: 1;
-            overflow: hidden;
+            overflow: hidden; /* Memotong area luar yang tidak diinginkan */
+            background: #ffffff;
         }
+
+        /* IFRAME DENGAN PERGESERAN KONTEN */
         .iframe-wrapper iframe {
             position: absolute;
-            top: -200px;
-            left: 0;
-            width: 100%;
-            height: calc(100% + 200px);
+            
+            /* --- ATUR POSISI DAN POTONGAN DI SINI --- */
+            top: -180px;      /* Geser ke atas untuk menyembunyikan header/margin atas */
+            left: -10px;      /* Geser ke kiri untuk membuang margin kosong samping */
+            width: 102%;      /* Melebarkan iframe agar menutupi margin kanan */
+            height: calc(100% + 220px); /* Menyesuaikan tinggi setelah digeser ke atas */
+            
             border: none;
+            
+            /* Menghilangkan scrollbar tambahan jika ada */
+            overflow: hidden; 
         }
     </style>
 </head>
@@ -244,26 +254,25 @@
         </div>
     </div>
 
-    <!-- HALAMAN DASHBOARD LINK UTAMA -->
+    <!-- HALAMAN DASHBOARD -->
     <div id="dashboardView" class="dashboard-container">
         <div class="top-bar">
             <h3 id="userGreeting">ROCKY LINE — Sesi Akses Aktif</h3>
             <button id="btnLogout" class="btn-logout">Logout</button>
         </div>
         <div class="iframe-wrapper">
-            <iframe id="mainFrame" src=""></iframe>
+            <iframe id="mainFrame" src="" scrolling="auto"></iframe>
         </div>
     </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         
-        // Password tersimpan dalam enkode tersembunyi (btoa Base64)
         const USERS = [
-            { username: "rocky", passEnc: "a2Fud2lscGFz" }, // 
-            { username: "rocky", passEnc: "c2Rta2Fud2ls" }, // 
-            { username: "rocky", passEnc: "YWRtaW5rYW53aWw=" }, // 
-            { username: "rocky", passEnc: "ZmF0aGFy" }  // 
+            { username: "rocky", passEnc: "a2Fud2lscGFz" },
+            { username: "rocky", passEnc: "c2Rta2Fud2ls" },
+            { username: "rocky", passEnc: "YWRtaW5rYW53aWw=" },
+            { username: "rocky", passEnc: "ZmF0aGFy" }
         ];
 
         const LINK_UTAMA = "https://tryout.winayalaksa.id/user/dashboard";
@@ -276,7 +285,6 @@
         const btnLogout = document.getElementById('btnLogout');
         const userGreeting = document.getElementById('userGreeting');
 
-        // 1. SKRIP MATA PASSWORD
         const passwordInput = document.getElementById('password');
         const togglePasswordBtn = document.getElementById('togglePassword');
         const eyeIcon = document.getElementById('eyeIcon');
@@ -289,16 +297,12 @@
             eyeIcon.querySelector('path').setAttribute('d', isPassword ? eyeClosePath : eyeOpenPath);
         });
 
-        // 2. SKRIP LOGIN PENCOCOKAN INSTAN
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const userInput = document.getElementById('username').value.trim();
             const passInput = passwordInput.value.trim();
-
-            // Ubah input pengguna ke format enkode tersembunyi
             const encodedInput = btoa(passInput);
 
-            // Pencocokan langsung
             const foundUser = USERS.find(u => 
                 u.username === userInput && 
                 (u.passEnc === encodedInput || u.passEnc === passInput)
@@ -315,7 +319,6 @@
             }
         });
 
-        // 3. SKRIP LOGOUT
         btnLogout.addEventListener('click', function() {
             mainFrame.src = "";
             loginForm.reset();
