@@ -3,40 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akses Tautan</title>
+    <title>Akses Tautan Portal</title>
     <style>
-        html, body {
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            height: 100%;
-            overflow: hidden; /* Menghilangkan scrollbar bawaan */
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
         }
 
-        /* Container pembungkus untuk memotong tampilan */
-        .iframe-container {
+        /* --- 1. TAMPILAN FORM LOGIN --- */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 350px;
+        }
+        .login-card h2 {
+            margin-bottom: 20px;
+            font-size: 20px;
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .password-wrapper {
             position: relative;
             width: 100%;
-            height: 100vh;
-            overflow: hidden;
+        }
+        .password-wrapper input {
+            padding-right: 40px !important;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            z-index: 10;
+        }
+        .toggle-password svg {
+            width: 20px;
+            height: 20px;
+            fill: #666;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+            color: red;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
         }
 
-        /* Menggeser iframe ke atas agar bagian atasnya tersembunyi */
-        .iframe-container iframe {
+        /* --- 2. TAMPILAN LINK UTAMA + TOP BAR LOGOUT --- */
+        .dashboard-container {
+            display: none; /* Sembunyi sebelum login */
+            width: 100%;
+            height: 100vh;
+            flex-direction: column;
+        }
+        
+        /* Bar Navigasi Atas berisi Tombol Logout */
+        .top-bar {
+            height: 50px;
+            background-color: #1e293b;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .top-bar h3 {
+            font-size: 15px;
+            font-weight: normal;
+        }
+        .btn-logout {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .btn-logout:hover {
+            background-color: #dc2626;
+        }
+
+        /* Container iFrame dengan Efek Potong Bagian Atas (Cropped) */
+        .iframe-wrapper {
+            position: relative;
+            flex: 1;
+            overflow: hidden;
+        }
+        .iframe-wrapper iframe {
             position: absolute;
-            top: -200px; /* UBAH ANGKA INI: Semakin besar minusnya, semakin banyak bagian atas yang terpotong */
+            top: -200px; /* POTONG ATAS: Ubah angka ini (misal: -150px / -250px) sesuai tinggi bagian web yang mau disembunyikan */
             left: 0;
             width: 100%;
-            height: calc(100% + 200px); /* Sesuaikan nilainya dengan nilai 'top' di atas */
+            height: calc(100% + 200px); /* Samakan angka penambahannya dengan nilai 'top' di atas */
             border: none;
         }
     </style>
 </head>
 <body>
 
-    <!-- Container iFrame -->
-    <div class="iframe-container">
-        <iframe src="https://tryout.winayalaksa.id/user/dashboard"></iframe>
+    <!-- HALAMAN LOGIN -->
+    <div id="loginView" class="login-container">
+        <div class="login-card">
+            <h2>Masuk untuk Melanjutkan</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required placeholder="Masukkan username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" required placeholder="Masukkan password">
+                        <button type="button" id="togglePassword" class="toggle-password" title="Tampilkan/Sembunyikan Password">
+                            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">Masuk</button>
+                <p id="errorMsg" class="error-message">Username atau password salah!</p>
+            </form>
+        </div>
     </div>
+
+    <!-- HALAMAN DASHBOARD LINK UTAMA -->
+    <div id="dashboardView" class="dashboard-container">
+        <div class="top-bar">
+            <h3>Sesi Akses Aktif</h3>
+            <button id="btnLogout" class="btn-logout">Logout</button>
+        </div>
+        <div class="iframe-wrapper">
+            <iframe id="mainFrame" src=""></iframe>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // --- PENGATURAN KREDENSIAL & LINK ---
+        const USERNAME_BENAR = "user123";
+        const PASSWORD_BENAR = "rahasia123";
+        const LINK_UTAMA = "https://tryout.winayalaksa.id/user/dashboard";
+
+        const loginView = document.getElementById('loginView');
+        const dashboardView = document.getElementById('dashboardView');
+        const mainFrame = document.getElementById('mainFrame');
+        const loginForm = document.getElementById('loginForm');
+        const errorMsg = document.getElementById('errorMsg');
+        const btnLogout = document.getElementById('btnLogout');
+
+        // 1. SKRIP MATA PASSWORD
+        const passwordInput = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const eyeOpenPath = 'M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z';
+        const eyeClosePath = 'M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.17c0-1.66-1.34-3-3-3l-.17.02z';
+
+        togglePasswordBtn.addEventListener('click', function() {
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+            eyeIcon.querySelector('path').setAttribute('d', isPassword ? eyeClosePath : eyeOpenPath);
+        });
+
+        // 2. SKRIP LOGIN
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userInput = document.getElementById('username').value.trim();
+            const passInput = passwordInput.value.trim();
+
+            if (userInput === USERNAME_BENAR && passInput === PASSWORD_BENAR) {
+                errorMsg.style.display = 'none';
+                
+                // Set URL iframe dan pindah tampilan
+                mainFrame.src = LINK_UTAMA;
+                loginView.style.display = 'none';
+                dashboardView.style.display = 'flex';
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        });
+
+        // 3. SKRIP LOGOUT
+        btnLogout.addEventListener('click', function() {
+            // Kosongkan link iframe
+            mainFrame.src = "";
+            
+            // Reset isi inputan login
+            loginForm.reset();
+            
+            // Pindahkan tampilan kembali ke login
+            dashboardView.style.display = 'none';
+            loginView.style.display = 'flex';
+        });
+    });
+</script>
 
 </body>
 </html>
