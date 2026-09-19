@@ -3,14 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0; url=https://tryout.winayalaksa.id/user/dashboard">
-    <title>Mengarahkan...</title>
-    <script>
-        window.location.href = "https://tryout.winayalaksa.id/user/dashboard";
-    </script>
+    <title>Login - Akses Tautan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 350px;
+        }
+        .login-card h2 {
+            margin-bottom: 20px;
+            font-size: 20px;
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+            color: red;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+        }
+    </style>
 </head>
-<body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
-    <p>Mengarahkan ke halaman dashboard...</p>
-    <p>Jika halaman tidak berpindah secara otomatis, <a href="https://tryout.winayalaksa.id/user/dashboard">klik di sini</a>.</p>
+<body>
+
+<div class="login-card">
+    <h2>Masuk untuk Melanjutkan</h2>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" required placeholder="Masukkan username">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" required placeholder="Masukkan password">
+        </div>
+        <button type="submit" class="btn-submit">Masuk</button>
+        <p id="errorMsg" class="error-message">Username atau password salah!</p>
+    </form>
+</div>
+
+<script>
+    // Setel Username, Password, dan Link Utama di sini
+    const USERNAME_BENAR = "Rocky";
+    const PASSWORD_BENAR = "Rockyline";
+    const LINK_UTAMA = "https://tryout.winayalaksa.id/user/dashboard"; // Ganti dengan link tujuanmu
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // Mencegah reload halaman
+        
+        const userInput = document.getElementById('username').value;
+        const passInput = document.getElementById('password').value;
+        const errorMsg = document.getElementById('errorMsg');
+
+        // Cek kecocokan login
+        if (userInput === USERNAME_BENAR && passInput === PASSWORD_BENAR) {
+            // Jika benar, alihkan ke link utama
+            window.location.href = LINK_UTAMA;
+        } else {
+            // Jika salah, tampilkan pesan error
+            errorMsg.style.display = 'block';
+        }
+    });
+</script>
+
 </body>
 </html>
