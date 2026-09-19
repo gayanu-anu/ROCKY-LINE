@@ -153,7 +153,7 @@
             display: none;
         }
 
-        /* --- 2. DASHBOARD & PENGATURAN PEMOTONGAN IFRAME --- */
+        /* --- 2. DASHBOARD & PENGATURAN IFRAME --- */
         .dashboard-container {
             display: none;
             width: 100%;
@@ -193,27 +193,20 @@
             opacity: 0.9;
         }
 
-        /* WADAH PENGAPIT IFRAME (CROPPER) */
         .iframe-wrapper {
             position: relative;
             flex: 1;
-            overflow: hidden; /* Memotong area luar yang tidak diinginkan */
+            overflow: hidden;
             background: #ffffff;
         }
 
-        /* IFRAME DENGAN PERGESERAN KONTEN */
         .iframe-wrapper iframe {
             position: absolute;
-            
-            /* --- ATUR POSISI DAN POTONGAN DI SINI --- */
-            top: -180px;      /* Geser ke atas untuk menyembunyikan header/margin atas */
-            left: -10px;      /* Geser ke kiri untuk membuang margin kosong samping */
-            width: 102%;      /* Melebarkan iframe agar menutupi margin kanan */
-            height: calc(100% + 220px); /* Menyesuaikan tinggi setelah digeser ke atas */
-            
+            top: -180px;
+            left: -10px;
+            width: 102%;
+            height: calc(100% + 220px);
             border: none;
-            
-            /* Menghilangkan scrollbar tambahan jika ada */
             overflow: hidden; 
         }
     </style>
@@ -291,12 +284,30 @@
         const eyeOpenPath = 'M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z';
         const eyeClosePath = 'M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.17c0-1.66-1.34-3-3-3l-.17.02z';
 
+        // FUNGSI UNTUK MENAMPILKAN DASHBOARD
+        function showDashboard(username) {
+            userGreeting.textContent = `ROCKY LINE — Sesi Akses Aktif (${username})`;
+            if (!mainFrame.src || mainFrame.src === "about:blank") {
+                mainFrame.src = LINK_UTAMA;
+            }
+            loginView.style.display = 'none';
+            dashboardView.style.display = 'flex';
+        }
+
+        // 1. CEK SESI LOGIN SAAT HALAMAN DILOAD / REFRESH
+        const savedUser = localStorage.getItem('loggedInUser');
+        if (savedUser) {
+            showDashboard(savedUser);
+        }
+
+        // 2. TOGGLE PASSWORD
         togglePasswordBtn.addEventListener('click', function() {
             const isPassword = passwordInput.getAttribute('type') === 'password';
             passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
             eyeIcon.querySelector('path').setAttribute('d', isPassword ? eyeClosePath : eyeOpenPath);
         });
 
+        // 3. PROSES LOGIN & SIMPAN STATUS SESI
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const userInput = document.getElementById('username').value.trim();
@@ -310,16 +321,21 @@
 
             if (foundUser) {
                 errorMsg.style.display = 'none';
-                userGreeting.textContent = `ROCKY LINE — Sesi Akses Aktif (${foundUser.username})`;
-                mainFrame.src = LINK_UTAMA;
-                loginView.style.display = 'none';
-                dashboardView.style.display = 'flex';
+                
+                // Simpan username ke localStorage agar tidak hilang saat refresh
+                localStorage.setItem('loggedInUser', foundUser.username);
+                
+                showDashboard(foundUser.username);
             } else {
                 errorMsg.style.display = 'block';
             }
         });
 
+        // 4. PROSES LOGOUT & HAPUS SESI
         btnLogout.addEventListener('click', function() {
+            // Hapus status simpanan login
+            localStorage.removeItem('loggedInUser');
+            
             mainFrame.src = "";
             loginForm.reset();
             dashboardView.style.display = 'none';
