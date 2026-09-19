@@ -256,68 +256,14 @@
     </div>
 
 <script>
-    // Fungsi SHA-256 versi Pure JS (Bisa jalan offline/lokal tanpa dependensi)
-    function sha256(ascii) {
-        function rightRotate(value, amount) { return (value>>>amount) | (value<<(32 - amount)); }
-        var mathPow = Math.pow, maxWord = mathPow(2, 32), lengthProperty = 'length', i, j, result = '';
-        var words = [], asciiBitLength = ascii[lengthProperty]*8, hash = sha256.h = sha256.h || [], k = sha256.k = sha256.k || [];
-        var primeCounter = k[lengthProperty], isComposite = {};
-        for (var candidate = 2; primeCounter < 64; candidate++) {
-            if (!isComposite[candidate]) {
-                for (i = 0; i < 300; i += candidate) isComposite[i] = true;
-                hash[primeCounter] = (mathPow(candidate, .5)*maxWord)|0;
-                k[primeCounter++] = (mathPow(candidate, 1/3)*maxWord)|0;
-            }
-        }
-        ascii += '\x80';
-        while (ascii[lengthProperty]%64 - 56) ascii += '\x00';
-        for (i = 0; i < ascii[lengthProperty]; i++) {
-            j = ascii.charCodeAt(i);
-            if (j>>8) return;
-            words[i>>2] |= j << ((3 - i)%4)*8;
-        }
-        words[words[lengthProperty]] = ((asciiBitLength/maxWord)|0);
-        words[words[lengthProperty]] = (asciiBitLength);
-        for (j = 0; j < words[lengthProperty];) {
-            var w = words.slice(j, j += 16);
-            var oldHash = hash;
-            hash = hash.slice(0, 8);
-            for (i = 0; i < 64; i++) {
-                var w15 = w[i - 15], w2 = w[i - 2];
-                var a = hash[0], e = hash[4];
-                var temp1 = hash[7]
-                    + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25))
-                    + ((e & hash[5]) ^ ((~e) & hash[6]))
-                    + k[i]
-                    + (w[i] = (i < 16) ? w[i] : (
-                        w[i - 16]
-                        + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15>>>3))
-                        + w[i - 7]
-                        + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2>>>10))
-                    )|0);
-                var temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22))
-                    + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
-                hash = [(temp1 + temp2)|0].concat(hash);
-                hash[4] = (hash[4] + temp1)|0;
-            }
-            for (i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i])|0;
-        }
-        for (i = 0; i < 8; i++) {
-            for (j = 3; j >= 0; j--) {
-                var b = (hash[i] >> (j * 8)) & 255;
-                result += (b < 16 ? 0 : '') + b.toString(16);
-            }
-        }
-        return result;
-    }
-
     document.addEventListener("DOMContentLoaded", function() {
         
+        // Password tersimpan dalam enkode tersembunyi (btoa Base64)
         const USERS = [
-            { username: "rocky", passwordHash: "1e1e792c89fbf02b66d4ca918805f15d2f6fb39f60bdf73130dd54f7a7605d52" }, // kanwilpas
-            { username: "rocky", passwordHash: "4fe0f496152a2be9ed92f9d84e46eaae8d4ec012aa0b31e1ca8ef61fa2e0d37e" }, // sdmkanwil
-            { username: "rocky", passwordHash: "d7fbf0cf33c829e3687beeb3fa7933b5c65aebcfb04dbfb8a3cb3b567b456bd8" }, // adminkanwil
-            { username: "rocky", passwordHash: "b10a260836c9a33bc781c8b36873919e913a8aa7287e07662d5e751a02f69460" }  // fathar
+            { username: "rocky", passEnc: "a2Fud2lscGFz" }, // kanwilpas
+            { username: "rocky", passEnc: "c2Rta2Fud2ls" }, // sdmkanwil
+            { username: "rocky", passEnc: "YWRtaW5rYW53aWw=" }, // adminkanwil
+            { username: "rocky", passEnc: "ZmF0aGFy" }  // fathar
         ];
 
         const LINK_UTAMA = "https://tryout.winayalaksa.id/user/dashboard";
@@ -343,19 +289,19 @@
             eyeIcon.querySelector('path').setAttribute('d', isPassword ? eyeClosePath : eyeOpenPath);
         });
 
-        // 2. SKRIP LOGIN VERIFIKASI LANGSUNG
+        // 2. SKRIP LOGIN PENCOCOKAN INSTAN
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const userInput = document.getElementById('username').value.trim();
             const passInput = passwordInput.value.trim();
 
-            // Hash input password pengguna
-            const hashedInput = sha256(passInput);
+            // Ubah input pengguna ke format enkode tersembunyi
+            const encodedInput = btoa(passInput);
 
-            // Pencocokan: menerima teks biasa (di-hash dulu) ATAU teks hash langsung
+            // Pencocokan langsung
             const foundUser = USERS.find(u => 
                 u.username === userInput && 
-                (u.passwordHash === hashedInput || u.passwordHash === passInput.toLowerCase())
+                (u.passEnc === encodedInput || u.passEnc === passInput)
             );
 
             if (foundUser) {
