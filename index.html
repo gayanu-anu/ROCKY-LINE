@@ -84,26 +84,32 @@
     </form>
 </div>
 
+<!-- KODE JAVASCRIPT DILETAKKAN SEBELUM TUTUP BODY -->
 <script>
-    // Setel Username, Password, dan Link Utama di sini
-    const USERNAME_BENAR = "Rocky";
-    const PASSWORD_BENAR = "Rockyline";
-    const LINK_UTAMA = "https://tryout.winayalaksa.id/user/dashboard"; // Ganti dengan link tujuanmu
+    document.addEventListener("DOMContentLoaded", function() {
+        // Setel Username, Password, dan Link Tujuan di sini
+        const USERNAME_BENAR = "user123";
+        const PASSWORD_BENAR = "rahasia123";
+        const LINK_UTAMA = "https://tryout.winayalaksa.id/user/dashboard";
 
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // Mencegah reload halaman
-        
-        const userInput = document.getElementById('username').value;
-        const passInput = document.getElementById('password').value;
+        const form = document.getElementById('loginForm');
         const errorMsg = document.getElementById('errorMsg');
 
-        // Cek kecocokan login
-        if (userInput === USERNAME_BENAR && passInput === PASSWORD_BENAR) {
-            // Jika benar, alihkan ke link utama
-            window.location.href = LINK_UTAMA;
-        } else {
-            // Jika salah, tampilkan pesan error
-            errorMsg.style.display = 'block';
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // Mencegah reload halaman
+                
+                const userInput = document.getElementById('username').value.trim();
+                const passInput = document.getElementById('password').value.trim();
+
+                // Pengecekan Login
+                if (userInput === USERNAME_BENAR && passInput === PASSWORD_BENAR) {
+                    errorMsg.style.display = 'none';
+                    window.location.href = LINK_UTAMA;
+                } else {
+                    errorMsg.style.display = 'block';
+                }
+            });
         }
     });
 </script>
