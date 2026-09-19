@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akses Tautan Portal</title>
+    <title>ROCKY LINE - Portal Akses</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,7 +12,6 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* Latar belakang gradient penuh warna */
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
@@ -51,11 +50,23 @@
             height: 30px;
             fill: white;
         }
+        /* Style Tambahan untuk Teks ROCKY LINE */
+        .brand-title {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 2.5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
         .login-card h2 {
             margin-bottom: 25px;
-            font-size: 22px;
-            color: #2d3748;
-            font-weight: 700;
+            font-size: 15px;
+            color: #718096;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
         .form-group {
             margin-bottom: 18px;
@@ -114,7 +125,6 @@
         .btn-submit {
             width: 100%;
             padding: 12px;
-            /* Gradient tombol login */
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             color: white;
@@ -184,7 +194,6 @@
             opacity: 0.9;
         }
 
-        /* Container iFrame dengan Efek Potong Atas (Cropped) */
         .iframe-wrapper {
             position: relative;
             flex: 1;
@@ -192,7 +201,7 @@
         }
         .iframe-wrapper iframe {
             position: absolute;
-            top: -200px; /* Atur tinggi pemotongan di sini */
+            top: -200px;
             left: 0;
             width: 100%;
             height: calc(100% + 200px);
@@ -202,7 +211,7 @@
 </head>
 <body>
 
-    <!-- HALAMAN LOGIN (COLORFUL) -->
+    <!-- HALAMAN LOGIN (COLORFUL WITH BRANDING) -->
     <div id="loginView" class="login-container">
         <div class="login-card">
             <div class="avatar-icon">
@@ -210,7 +219,11 @@
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                 </svg>
             </div>
+            
+            <!-- Teks Tambahan ROCKY LINE -->
+            <h1 class="brand-title">ROCKY LINE</h1>
             <h2>Selamat Datang</h2>
+            
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username">Username</label>
@@ -236,7 +249,7 @@
     <!-- HALAMAN DASHBOARD LINK UTAMA -->
     <div id="dashboardView" class="dashboard-container">
         <div class="top-bar">
-            <h3>Sesi Akses Aktif</h3>
+            <h3>ROCKY LINE — Sesi Akses Aktif</h3>
             <button id="btnLogout" class="btn-logout">Logout</button>
         </div>
         <div class="iframe-wrapper">
