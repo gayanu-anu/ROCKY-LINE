@@ -225,12 +225,12 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" required placeholder="Masukkan username" autocomplete="username">
+                    <input type="text" id="username" required placeholder="Masukkan username">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
                     <div class="password-wrapper">
-                        <input type="password" id="password" required placeholder="Masukkan password" autocomplete="current-password">
+                        <input type="password" id="password" required placeholder="Masukkan password">
                         <button type="button" id="togglePassword" class="toggle-password" title="Tampilkan/Sembunyikan Password">
                             <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
@@ -258,20 +258,12 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         
-        // Fungsi pembantu untuk mengubah string teks menjadi Hash SHA-256
-        async function hashPassword(message) {
-            const msgUint8 = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        // Daftar pengguna dengan kata sandi terenkripsi (SHA-256 Hash)
+        // Daftar pengguna dan password langsung (tanpa enkripsi HASH)
         const USERS = [
-            { username: "rocky", passwordHash: "6c6507efd9361a9fbdf3bd80c0576359ebfa36aafe7be24dcf5efefad4422e11" }, // kanwilpas
-            { username: "rocky", passwordHash: "6df96fbb5f25979bb8f1610e2eb0a9a1dbe309a06ee062bfeb0f760e7e1bc3a8" }, // sdmkanwil
-            { username: "rocky", passwordHash: "e5a7826df5012e122b5e2d634eb92f706ecae83041cbfb9d09ed871a2be10c14" }, // adminkanwil
-            { username: "rocky", passwordHash: "eb481a5665e751db52cbdb120c1caaaecaa9dc9a6df765df05e0efd32b5ca565" }  // fathar
+            { username: "rocky", password: "kanwilpas" },
+            { username: "rocky", password: "sdmkanwil" },
+            { username: "rocky", password: "adminkanwil" },
+            { username: "rocky", password: "fathar" }
         ];
 
         const LINK_UTAMA = "https://tryout.winayalaksa.id/user/dashboard";
@@ -297,18 +289,14 @@
             eyeIcon.querySelector('path').setAttribute('d', isPassword ? eyeClosePath : eyeOpenPath);
         });
 
-        // 2. SKRIP LOGIN VERIFIKASI HASH SHA-256
-        loginForm.addEventListener('submit', async function(e) {
+        // 2. SKRIP LOGIN VERIFIKASI LANGSUNG
+        loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Menghapus spasi di awal/akhir dan karakter tidak terlihat
             const userInput = document.getElementById('username').value.trim();
-            const passInput = passwordInput.value.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
+            const passInput = passwordInput.value.trim();
 
-            // Mengubah input kata sandi pengguna menjadi Hash SHA-256
-            const inputHash = await hashPassword(passInput);
-
-            // Mencocokkan username dan hash kata sandi
-            const foundUser = USERS.find(u => u.username.toLowerCase() === userInput.toLowerCase() && u.passwordHash === inputHash);
+            // Mencocokkan username dan password secara langsung
+            const foundUser = USERS.find(u => u.username === userInput && u.password === passInput);
 
             if (foundUser) {
                 errorMsg.style.display = 'none';
