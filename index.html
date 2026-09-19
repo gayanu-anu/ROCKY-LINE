@@ -258,12 +258,12 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         
-        // Daftar pengguna dan password langsung (tanpa enkripsi HASH)
+        // Daftar pengguna dengan Hash SHA-256 dari masing-masing password
         const USERS = [
-            { username: "rocky", password: "kanwilpas" },
-            { username: "rocky", password: "sdmkanwil" },
-            { username: "rocky", password: "adminkanwil" },
-            { username: "rocky", password: "fathar" }
+            { username: "rocky", passwordHash: "1e1e792c89fbf02b66d4ca918805f15d2f6fb39f60bdf73130dd54f7a7605d52" }, // kanwilpas
+            { username: "rocky", passwordHash: "4fe0f496152a2be9ed92f9d84e46eaae8d4ec012aa0b31e1ca8ef61fa2e0d37e" }, // sdmkanwil
+            { username: "rocky", passwordHash: "d7fbf0cf33c829e3687beeb3fa7933b5c65aebcfb04dbfb8a3cb3b567b456bd8" }, // adminkanwil
+            { username: "rocky", passwordHash: "b10a260836c9a33bc781c8b36873919e913a8aa7287e07662d5e751a02f69460" }  // fathar
         ];
 
         const LINK_UTAMA = "https://tryout.winayalaksa.id/user/dashboard";
@@ -275,6 +275,15 @@
         const errorMsg = document.getElementById('errorMsg');
         const btnLogout = document.getElementById('btnLogout');
         const userGreeting = document.getElementById('userGreeting');
+
+        // Fungsi pembantu untuk mengubah teks biasa menjadi Hash SHA-256
+        async function hashPassword(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
         // 1. SKRIP MATA PASSWORD
         const passwordInput = document.getElementById('password');
@@ -289,14 +298,17 @@
             eyeIcon.querySelector('path').setAttribute('d', isPassword ? eyeClosePath : eyeOpenPath);
         });
 
-        // 2. SKRIP LOGIN VERIFIKASI LANGSUNG
-        loginForm.addEventListener('submit', function(e) {
+        // 2. SKRIP LOGIN VERIFIKASI HASH
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const userInput = document.getElementById('username').value.trim();
             const passInput = passwordInput.value.trim();
 
-            // Mencocokkan username dan password secara langsung
-            const foundUser = USERS.find(u => u.username === userInput && u.password === passInput);
+            // Ubah password inputan pengguna ke SHA-256
+            const hashedInput = await hashPassword(passInput);
+
+            // Pencocokan username dan hash password
+            const foundUser = USERS.find(u => u.username === userInput && u.passwordHash === hashedInput);
 
             if (foundUser) {
                 errorMsg.style.display = 'none';
