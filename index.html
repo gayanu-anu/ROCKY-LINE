@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ROCKY LINE - Portal Akses</title>
+    <!-- Library CryptoJS untuk enkripsi SHA-256 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -257,12 +259,16 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // DAFTAR PENGGUNA TERDAFTAR (Tambahkan user baru di sini)
+        // DAFTAR HASIL HASH SHA-256 DARI MASING-MASING PASSWORD:
+        // "adminkanwil" -> a3bb759169a9e3bc8dfcf81cf26a8f1fb404c0df61582e05f0a202d0cf3f4c63
+        // "kanwilpas"    -> e004bcaaaec74431d15db5fbcf6aebcf409f5a77098e94e5a2662c2f704fa4b2
+        // "sdmpas"       -> ec73d84ca5cf4ee1ec87ee9cae1eb6368d37a5e0aa062638848e4b3701633bbd
+        // "analissdma"   -> a513909ea2b54d31be7a7bf7a74ef433ae2cb233bce3818e801b7a6071ef22c1
         const USERS = [
-            { username: "rocky", password: "adminkanwil" },
-            { username: "rocky", password: "kanwilpas" },
-            { username: "rocky", password: "sdmpas" },
-            { username: "rocky", password: "analissdma" }
+            { username: "rocky", passwordHash: "a3bb759169a9e3bc8dfcf81cf26a8f1fb404c0df61582e05f0a202d0cf3f4c63" },
+            { username: "rocky", passwordHash: "e004bcaaaec74431d15db5fbcf6aebcf409f5a77098e94e5a2662c2f704fa4b2" },
+            { username: "rocky", passwordHash: "ec73d84ca5cf4ee1ec87ee9cae1eb6368d37a5e0aa062638848e4b3701633bbd" },
+            { username: "rocky", passwordHash: "a513909ea2b54d31be7a7bf7a74ef433ae2cb233bce3818e801b7a6071ef22c1" }
         ];
 
         const LINK_UTAMA = "https://tryout.winayalaksa.id/user/dashboard";
@@ -288,21 +294,21 @@
             eyeIcon.querySelector('path').setAttribute('d', isPassword ? eyeClosePath : eyeOpenPath);
         });
 
-        // 2. SKRIP LOGIN MULTI-USER
+        // 2. SKRIP LOGIN DENGAN SHA-256
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const userInput = document.getElementById('username').value.trim();
             const passInput = passwordInput.value.trim();
 
-            // Cek apakah ada kombinasi username dan password yang cocok dalam array USERS
-            const foundUser = USERS.find(u => u.username === userInput && u.password === passInput);
+            // Mengubah input password pengguna menjadi hash SHA-256
+            const hashedInput = CryptoJS.SHA256(passInput).toString();
+
+            // Mencocokkan username dan hasil hash
+            const foundUser = USERS.find(u => u.username === userInput && u.passwordHash === hashedInput);
 
             if (foundUser) {
                 errorMsg.style.display = 'none';
-                
-                // Menampilkan nama user di top-bar
                 userGreeting.textContent = `ROCKY LINE — Sesi Akses Aktif (${foundUser.username})`;
-                
                 mainFrame.src = LINK_UTAMA;
                 loginView.style.display = 'none';
                 dashboardView.style.display = 'flex';
